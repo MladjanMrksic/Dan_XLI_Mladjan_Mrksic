@@ -47,7 +47,8 @@ namespace Printer
                 }
                 string fileName = string.Format(i + "." + DateTime.Now.Day + "_" + DateTime.Now.Month + "_" + DateTime.Now.Year + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute);
                 string filePath = string.Format(".../.../" + fileName + ".txt");
-                File.Create(filePath);
+                File.Create(filePath).Close();
+                sw = new StreamWriter(filePath);
                 sw.WriteLine(filePath);
                 bw.ReportProgress(increment * i);
                 Thread.Sleep(1000);
@@ -73,6 +74,33 @@ namespace Printer
         void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pb.Value = e.ProgressPercentage;
+        }
+        private void Print_Click(object sender, RoutedEventArgs e)
+        {
+            bw.RunWorkerAsync();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            bw.CancelAsync();
+            Cancel.IsEnabled = true;
+        }
+
+        private void Copies_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(copies.Text, "[^0-9]"))
+            {
+                MessageBox.Show("Please enter only numbers.");
+                copies.Text = copies.Text.Remove(copies.Text.Length - 1);
+            }
+            else if (int.TryParse(copies.Text, out NumberOfCopies) == true)
+            {
+                NumberOfCopies = Convert.ToInt32(copies.Text);
+            }
+        }
+        private void Text_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            TextToPrint = text.Text;
         }
     }
 }
