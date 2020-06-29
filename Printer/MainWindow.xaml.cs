@@ -20,9 +20,8 @@ namespace Printer
 {
     public partial class MainWindow : Window
     {
-
-        string TextToPrint = null;
-        int NumberOfCopies = 0;
+        string TextToPrint;
+        int NumberOfCopies;
         static StreamWriter sw;
         static BackgroundWorker bw = new BackgroundWorker
         {
@@ -31,9 +30,6 @@ namespace Printer
         };
         public MainWindow()
         {
-            Thread t = new Thread(PrintEnable);
-            t.IsBackground = true;
-            t.Start();
             bw.DoWork += DoWork;
             bw.ProgressChanged += ProgressChanged;
             bw.RunWorkerCompleted += WorkCompleted;
@@ -98,7 +94,7 @@ namespace Printer
             bw.CancelAsync();            
         }
 
-        private void Copies_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void Copies_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(copies.Text, "[^0-9]"))
             {
@@ -109,24 +105,27 @@ namespace Printer
             {
                 NumberOfCopies = Convert.ToInt32(copies.Text);
             }
-        }
-        private void Text_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            TextToPrint = text.Text;
-        }
-        private void PrintEnable()
-        {
-            while (true)
+            if (TextToPrint != null && NumberOfCopies > 0)
             {
-                if (text == null && copies == null)
-                {
-                    Print.IsEnabled = false;
-                }
-                else
-                {
-                    Print.IsEnabled = true;
-                }
+                Print.IsEnabled = true;
+            }
+            else if (string.IsNullOrWhiteSpace(TextToPrint) || NumberOfCopies <= 0)
+            {
+                Print.IsEnabled = false;
             }
         }
+        private void Text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextToPrint = text.Text;
+            if (string.IsNullOrWhiteSpace(TextToPrint) || NumberOfCopies <= 0)
+            {
+                Print.IsEnabled = false;
+            }
+            else if (TextToPrint != null && NumberOfCopies > 0)
+            {
+                Print.IsEnabled = true;
+            }
+
+        }       
     }
 }
