@@ -20,8 +20,9 @@ namespace Printer
 {
     public partial class MainWindow : Window
     {
-        string TextToPrint;
-        int NumberOfCopies;
+
+        string TextToPrint = null;
+        int NumberOfCopies = 0;
         static StreamWriter sw;
         static BackgroundWorker bw = new BackgroundWorker
         {
@@ -30,6 +31,9 @@ namespace Printer
         };
         public MainWindow()
         {
+            Thread t = new Thread(PrintEnable);
+            t.IsBackground = true;
+            t.Start();
             bw.DoWork += DoWork;
             bw.ProgressChanged += ProgressChanged;
             bw.RunWorkerCompleted += WorkCompleted;
@@ -70,6 +74,7 @@ namespace Printer
                 MessageBox.Show("Completed");
             }
             pb.Value = 0;
+            Cancel.IsEnabled = false;
         }
         void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -77,13 +82,20 @@ namespace Printer
         }
         private void Print_Click(object sender, RoutedEventArgs e)
         {
-            bw.RunWorkerAsync();
+            if (bw.IsBusy==true)
+            {
+                MessageBox.Show("System is busy printing. Please wait until it finishes, or press Cancel to stop printing");
+            }
+            else
+            {
+                Cancel.IsEnabled = true;
+                bw.RunWorkerAsync();
+            }            
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            bw.CancelAsync();
-            Cancel.IsEnabled = true;
+            bw.CancelAsync();            
         }
 
         private void Copies_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
@@ -101,6 +113,20 @@ namespace Printer
         private void Text_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             TextToPrint = text.Text;
+        }
+        private void PrintEnable()
+        {
+            while (true)
+            {
+                if (text == null && copies == null)
+                {
+                    Print.IsEnabled = false;
+                }
+                else
+                {
+                    Print.IsEnabled = true;
+                }
+            }
         }
     }
 }
