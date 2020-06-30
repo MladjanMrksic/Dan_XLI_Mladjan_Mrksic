@@ -9,10 +9,11 @@
     <Grid>
         <TextBox x:Name="text" HorizontalAlignment="Left" Height="333" Margin="10,0,0,77" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="774" TextChanged="Text_TextChanged"/>
         <Button x:Name="Print" Content="Print" HorizontalAlignment="Left" Margin="338,354,0,0" VerticalAlignment="Top" Width="75" Click="Print_Click" IsEnabled="False"/>
-        <ProgressBar Name="pb" HorizontalAlignment="Left" Height="20" Margin="190,390,0,0" VerticalAlignment="Top" Width="409" Minimum="0" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}"/>
+        <ProgressBar Name="pb" HorizontalAlignment="Left" Height="20" Margin="178,386,0,0" VerticalAlignment="Top" Width="409" Minimum="0" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}"/>
         <TextBox x:Name="copies" HorizontalAlignment="Left" Height="23" Margin="246,351,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54" TextChanged="Copies_TextChanged"/>
         <Button x:Name="Cancel" Content="Cancel" HorizontalAlignment="Left" Margin="452,354,0,0" VerticalAlignment="Top" Width="75" Click="Cancel_Click" IsEnabled="False"/>
         <Label x:Name="label" Content="Number of copies:" HorizontalAlignment="Left" Margin="134,348,0,0" VerticalAlignment="Top"/>
-        
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding ElementName=pb, Path=Value, StringFormat={}{0:0}%}" Margin="348,386,370.6,14" Width="75" RenderTransformOrigin="0.451,0.4" Height="20"/>
+
     </Grid>
 </Window>
